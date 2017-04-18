@@ -13,6 +13,7 @@ def get_last_modified_file(directory):
 
 def get_last_line_in_file(path):
   with open(path) as file:
+    file.seek(-1024, 2)
     return file.readlines()[-1] 
 
 def parse_sensor_output(line):
