@@ -12,8 +12,10 @@ def get_last_modified_file(directory):
   return newest
 
 def get_last_line_in_file(path):
+  statinfo = os.stat(path)
   with open(path) as file:
-    file.seek(-1024, 2)
+    if statinfo.st_size > 2000:
+      file.seek(-1024, 2)
     return file.readlines()[-1] 
 
 def parse_sensor_output(line):
