@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Module for reading out CO2Meter USB devices
 via a hidraw device under Linux
@@ -206,6 +207,22 @@ class HomeAssistantReporter:
         with urllib.request.urlopen(request) as f:
             pass
 
+def loop(sensor, reporter, room):
+    while True:
+        time.sleep(2)
+        try:
+            data = sensor.get_data()
+            print(data)
+            if 'co2' in data:
+                reporter.send_sensor_state(data['co2'], f"{room.lower()}_co2",
+                                           "ppm", f"{room} co2")
+            if 'temperature' in data:
+                reporter.send_sensor_state(data['temperature'], f"{room.lower()}_temp",
+                                           "\u00b0C", f"{room} temperature")
+        except Exception as e:
+            print(e, file=sys.stderr)
+
+
 def main(argv):
     token = ''
     url = ''
@@ -239,19 +256,7 @@ def main(argv):
     print(f'Sending data to {url}')
     sensor = CO2Meter("/dev/hidraw0")
     reporter = HomeAssistantReporter(token, url)
-    while True:
-        time.sleep(2)
-        try:
-            data = sensor.get_data()
-            print(data)
-            if 'co2' in data:
-                reporter.send_sensor_state(data['co2'], f"{room.lower()}_co2",
-                                           "ppm", f"{room} co2")
-            if 'temperature' in data:
-                reporter.send_sensor_state(data['temperature'], f"{room.lower()}_temp",
-                                           "\u00b0C", f"{room} temperature")
-        except Exception as e:
-            print(e, file=sys.stderr)
+    loop(sensor, reporter, room)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -1,0 +1,4 @@
+config co2monitor_sender 'co2monitor_sender'
+	option room 'Office'
+	option url 'raspberrypi:8123'
+	option token 'xxx'

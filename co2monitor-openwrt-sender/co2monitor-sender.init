@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=99
+
+start_service() {
+  local url room token
+
+  config_load "co2monitor_sender"
+
+  config_get url co2monitor_sender url
+  config_get room co2monitor_sender room
+  config_get token co2monitor_sender token
+
+  procd_open_instance
+  procd_set_param command /usr/bin/co2monitor-sender.py
+  procd_append_param command --url="$url"
+  procd_append_param command --room="$room"
+  procd_append_param command --token="$token"
+  procd_set_param env PYTHONUNBUFFERED=TRUE
+  procd_set_param respawn
+  procd_set_param stdout 1
+  procd_set_param stderr 1
+  procd_close_instance
+}
