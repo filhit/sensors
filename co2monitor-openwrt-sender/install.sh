@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+opkg update
+opkg install python3-light python3-codecs python3-email
+
 chmod +x co2monitor-sender.py
 chmod +x co2monitor-sender.init
 
